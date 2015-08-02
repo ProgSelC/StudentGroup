@@ -14,14 +14,30 @@ public class Human {
 		this.gender = gender;
 	}
 
-	public String getName() {
-		return name;
+	public void setSirname(String sirname) {
+		this.sirname = sirname;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public void setGender(char gender) {
+		this.gender = gender;
 	}
 
 	public String getSirname() {
 		return sirname;
 	}
 
+	public String getName() {
+		return name;
+	}
+	
 	public int getAge() {
 		return age;
 	}
@@ -32,7 +48,7 @@ public class Human {
 
 	@Override
 	public String toString() {
-		return this.sirname + " " + this.name + " age:" + this.age + " gender:"
+		return this.sirname + " " + this.name + "\tage:" + this.age + " gender:"
 				+ this.gender;
 	}
 }

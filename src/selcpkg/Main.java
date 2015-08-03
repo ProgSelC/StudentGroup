@@ -38,7 +38,7 @@ public class Main {
 				break;
 			case "find":
 				gr.findStudent(
-						Interactive.askUser("Input student sirname (or some first letters)", "[А-Я|A-Z][а-я|a-z]+"));
+						Interactive.askUser("Input student sirname (or some first letters)", "[А-ЯA-Z][а-яa-z]+"));
 				break;
 			case "sort":
 				gr.sortStudents();

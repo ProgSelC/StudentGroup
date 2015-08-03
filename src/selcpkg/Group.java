@@ -147,8 +147,8 @@ public class Group {
 	public void interactiveAdd() {
 
 		System.out.println("Adding new student to group " + this.getGroupNum());
-		String name = Interactive.askUser("Input student sirname", "[А-Я|A-Z][а-я|a-z]+");
-		String sirname = Interactive.askUser("Input student name", "[А-Я|A-Z][а-я|a-z]+");
+		String name = Interactive.askUser("Input student sirname", "[А-ЯA-Z][а-яa-z]+");
+		String sirname = Interactive.askUser("Input student name", "[А-ЯA-Z][а-яa-z]+");
 		int age = Integer.parseInt(Interactive.askUser("Input student age", "[1-7][0-9]"));
 		char gender = Interactive.askUser("Input student gender 'm' or 'f'", "[m,f]").charAt(0);
 		try {

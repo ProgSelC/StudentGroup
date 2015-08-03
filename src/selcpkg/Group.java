@@ -150,7 +150,7 @@ public class Group {
 		String name = Interactive.askUser("Input student sirname", "[А-ЯA-Z][а-яa-z]+");
 		String sirname = Interactive.askUser("Input student name", "[А-ЯA-Z][а-яa-z]+");
 		int age = Integer.parseInt(Interactive.askUser("Input student age", "[1-7][0-9]"));
-		char gender = Interactive.askUser("Input student gender 'm' or 'f'", "[m,f]").charAt(0);
+		char gender = Interactive.askUser("Input student gender 'm' or 'f'", "[mf]").charAt(0);
 		try {
 			this.addStudent(new Student(name, sirname, age, gender));
 		} catch (GroupIsFullException | DuplicationException e) {

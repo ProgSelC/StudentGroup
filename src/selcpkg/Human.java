@@ -37,7 +37,7 @@ public class Human {
 	public String getName() {
 		return name;
 	}
-	
+
 	public int getAge() {
 		return age;
 	}
@@ -48,7 +48,7 @@ public class Human {
 
 	@Override
 	public String toString() {
-		return this.sirname + " " + this.name + "\tage:" + this.age + " gender:"
-				+ this.gender;
+		return String.format("%-30s\t%-30s\tage: %d\tgender: %s", this.sirname,
+				this.name, this.age, this.gender);
 	}
 }

@@ -9,15 +9,17 @@ public class Student extends Human implements Comparable<Student> {
 		recbookNum = 0;
 	}
 
-	public Student(String name, String sirname, int age, char gender, Group gr, int rb) {
+	public Student(String name, String sirname, int age, char gender, Group gr,
+			int rb) {
 		super(name, sirname, age, gender);
 		group = gr;
 		recbookNum = rb;
 	}
 
-	public String returnTabSepInfo() {
-		return this.getSirname() + "\t" + this.getName() + "\t" + this.getAge() + "\t" + this.getGender() + "\t"
-				+ this.getRecbookNum() + "\n";
+	public String returnFormatedInfo() {
+		return String.format("%-30s\t%-30s\t%d\t%s\t%d\n", this.getSirname(),
+				this.getName(), this.getAge(), this.getGender(),
+				this.getRecbookNum());
 	}
 
 	public void setGroup(Group group) {
@@ -39,7 +41,8 @@ public class Student extends Human implements Comparable<Student> {
 	@Override
 	public String toString() {
 		String grNum = (group == null) ? "No group" : group.getGroupNum();
-		return super.toString() + " group:" + grNum + " recbook:" + recbookNum;
+		return String.format("%s\tgroup: %s\trecbook: %d", super.toString(),
+				grNum, recbookNum);
 	}
 
 	@Override

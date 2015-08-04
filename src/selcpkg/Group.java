@@ -43,11 +43,15 @@ public class Group {
 		String text = "";
 		int maxRbNum = Group.recbookNum;
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-			for (int i = 0; i < 10 && (text = br.readLine()) != null && text.length() != 0; i++) {
-				String[] a = text.split("\t");
-				this.students[i] = new Student(a[0], a[1], Integer.parseInt(a[2]), a[3].charAt(0), this,
-						Integer.parseInt(a[4]));
-				maxRbNum = (maxRbNum > Integer.parseInt(a[4])) ? maxRbNum : Integer.parseInt(a[4]);
+			for (int i = -1; i < 10 && (text = br.readLine()) != null; i++) {
+				if (i >= 0) {
+					String[] a = text.split("\\s+");
+					this.students[i] = new Student(a[0], a[1],
+							Integer.parseInt(a[2]), a[3].charAt(0), this,
+							Integer.parseInt(a[4]));
+					maxRbNum = (maxRbNum > Integer.parseInt(a[4])) ? maxRbNum
+							: Integer.parseInt(a[4]);
+				}
 			}
 			Group.recbookNum = maxRbNum;
 		} catch (IOException e) {
@@ -58,15 +62,18 @@ public class Group {
 	public void saveToFile() {
 		String filename = this.groupNum + ".txt";
 		try (PrintWriter fw = new PrintWriter(filename)) {
+			fw.printf("%-30s\t%-30s\t%s\t%s\t%s\n", "Sirname", "Name", "Age",
+					"Sex", "Recbook");
 			for (Student st : students)
-				fw.print(st.returnTabSepInfo());
+				fw.print(st.returnFormatedInfo());
 		} catch (IOException e) {
 			System.out.println("Error creating " + filename);
 		} catch (NullPointerException e) {
 		}
 	}
 
-	public void addStudent(Student st) throws GroupIsFullException, DuplicationException {
+	public void addStudent(Student st) throws GroupIsFullException,
+			DuplicationException {
 		boolean vacant = false;
 		if (st.getRecbookNum() != 0 || this.existsInGroup(st)) {
 			throw new DuplicationException();
@@ -89,7 +96,9 @@ public class Group {
 	public void findStudent(String sirname) {
 		StringBuffer results = new StringBuffer();
 		for (int i = 0; i < this.students.length; i++) {
-			if (this.students[i] != null && this.students[i].getSirname().matches("^" + sirname + ".*")) {
+			if (this.students[i] != null
+					&& this.students[i].getSirname().matches(
+							"^" + sirname + ".*")) {
 				results.append(this.students[i].toString() + "\n");
 			}
 		}
@@ -105,10 +114,11 @@ public class Group {
 		boolean stFound = false;
 		int stNumber = 0;
 		for (int i = 0; i < this.students.length; i++) {
-			if (this.students[i] != null && this.students[i].getRecbookNum() == rbNum) {
+			if (this.students[i] != null
+					&& this.students[i].getRecbookNum() == rbNum) {
 				this.students[i].setRecbookNum(0);
-				System.out.println(
-						"Student " + this.students[i].getSirname() + " " + this.students[i].getName() + " excluded");
+				System.out.println("Student " + this.students[i].getSirname()
+						+ " " + this.students[i].getName() + " excluded");
 				this.students[i].setGroup(null);
 				this.students[i] = null;
 				stFound = true;
@@ -130,7 +140,8 @@ public class Group {
 		int index = 0;
 		for (int i = 0; i < this.students.length; i++) {
 			if (this.students[i] != null) {
-				System.out.println(++index + ") " + this.students[i].toString());
+				System.out
+						.printf("%2d) %s\n",++index,this.students[i].toString());
 			}
 		}
 		System.out.println();
@@ -147,10 +158,14 @@ public class Group {
 	public void interactiveAdd() {
 
 		System.out.println("Adding new student to group " + this.getGroupNum());
-		String name = Interactive.askUser("Input student sirname", "[А-ЯA-Z][а-яa-z]+");
-		String sirname = Interactive.askUser("Input student name", "[А-ЯA-Z][а-яa-z]+");
-		int age = Integer.parseInt(Interactive.askUser("Input student age", "[1-7][0-9]"));
-		char gender = Interactive.askUser("Input student gender 'm' or 'f'", "[mf]").charAt(0);
+		String name = Interactive.askUser("Input student sirname",
+				"[А-ЯA-Z][а-яa-z]+");
+		String sirname = Interactive.askUser("Input student name",
+				"[А-ЯA-Z][а-яa-z]+");
+		int age = Integer.parseInt(Interactive.askUser("Input student age",
+				"[1-7][0-9]"));
+		char gender = Interactive.askUser("Input student gender 'm' or 'f'",
+				"[mf]").charAt(0);
 		try {
 			this.addStudent(new Student(name, sirname, age, gender));
 		} catch (GroupIsFullException | DuplicationException e) {
@@ -162,8 +177,10 @@ public class Group {
 		boolean result = false;
 		for (Student grStudent : this.students) {
 			if (grStudent != null) {
-				if (grStudent.getSirname().equals(st.getSirname()) && grStudent.getName().equals(st.getName())
-						&& grStudent.getGender() == st.getGender() && grStudent.getAge() == st.getAge()) {
+				if (grStudent.getSirname().equals(st.getSirname())
+						&& grStudent.getName().equals(st.getName())
+						&& grStudent.getGender() == st.getGender()
+						&& grStudent.getAge() == st.getAge()) {
 					result = true;
 				}
 			}

@@ -1,28 +1,27 @@
 package selcpkg;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Group {
+public class Group implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+
 	private static int recbookNum = 0;
-	private String groupNum;
+	private String grName;
 	private Student[] students = new Student[10];
 
-	public Group(String groupNum) {
+	public Group(String grName) {
 		super();
-		this.groupNum = groupNum;
-		File fl = new File(groupNum + ".txt");
-		if (fl.exists()) {
-			this.initFromFile(groupNum + ".txt");
-		}
+		this.grName = grName;
 	}
 
-	public String getGroupNum() {
-		return this.groupNum;
+	public String getGroupName() {
+		return this.grName;
 	}
 
 	public Student getStudent(int index) {
@@ -43,11 +42,15 @@ public class Group {
 		String text = "";
 		int maxRbNum = Group.recbookNum;
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-			for (int i = 0; i < 10 && (text = br.readLine()) != null && text.length() != 0; i++) {
-				String[] a = text.split("\t");
-				this.students[i] = new Student(a[0], a[1], Integer.parseInt(a[2]), a[3].charAt(0), this,
-						Integer.parseInt(a[4]));
-				maxRbNum = (maxRbNum > Integer.parseInt(a[4])) ? maxRbNum : Integer.parseInt(a[4]);
+			for (int i = -1; i < 10 && (text = br.readLine()) != null; i++) {
+				if (i >= 0) {
+					String[] a = text.split("\\s+");
+					this.students[i] = new Student(a[0], a[1],
+							Integer.parseInt(a[2]), a[3].charAt(0), this,
+							Integer.parseInt(a[4]));
+					maxRbNum = (maxRbNum > Integer.parseInt(a[4])) ? maxRbNum
+							: Integer.parseInt(a[4]);
+				}
 			}
 			Group.recbookNum = maxRbNum;
 		} catch (IOException e) {
@@ -56,16 +59,19 @@ public class Group {
 	}
 
 	public void saveToFile() {
-		String filename = this.groupNum + ".txt";
+		String filename = this.grName + ".txt";
 		try (PrintWriter fw = new PrintWriter(filename)) {
+			fw.printf("%-30s\t%-30s\t%s\t%s\t%s\n", "Sirname", "Name", "Age",
+					"Sex", "Recbook");
 			for (Student st : students)
-				fw.print(st.returnTabSepInfo());
+				fw.print(st.returnFormatedInfo());
 		} catch (IOException e) {
 			System.out.println("Error creating " + filename);
 		} catch (NullPointerException e) {
 		}
+		System.out.println("File successfully created!");
 	}
-
+	
 	public void addStudent(Student st) throws GroupIsFullException, DuplicationException {
 		boolean vacant = false;
 		if (st.getRecbookNum() != 0 || this.existsInGroup(st)) {
@@ -128,10 +134,15 @@ public class Group {
 
 	public void listStudents() {
 		int index = 0;
+		boolean stExist = false;
 		for (int i = 0; i < this.students.length; i++) {
 			if (this.students[i] != null) {
 				System.out.println(++index + ") " + this.students[i].toString());
+				stExist = true;
 			}
+		}
+		if(!stExist){
+			System.out.println("The group is empty!");
 		}
 		System.out.println();
 	}
@@ -146,7 +157,7 @@ public class Group {
 
 	public void interactiveAdd() {
 
-		System.out.println("Adding new student to group " + this.getGroupNum());
+		System.out.println("Adding new student to group " + this.getGroupName());
 		String name = Interactive.askUser("Input student sirname", "[А-ЯA-Z][а-яa-z]+");
 		String sirname = Interactive.askUser("Input student name", "[А-ЯA-Z][а-яa-z]+");
 		int age = Integer.parseInt(Interactive.askUser("Input student age", "[1-7][0-9]"));

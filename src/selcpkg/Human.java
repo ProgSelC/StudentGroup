@@ -1,6 +1,11 @@
 package selcpkg;
 
-public class Human {
+import java.io.Serializable;
+
+public class Human implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
 	private String sirname;
 	private String name;
 	private int age;
@@ -48,7 +53,7 @@ public class Human {
 
 	@Override
 	public String toString() {
-		return this.sirname + " " + this.name + "\tage:" + this.age + " gender:"
-				+ this.gender;
+		return String.format("%-30s\t%-30s\tage: %d\tgender: %s", this.sirname,
+				this.name, this.age, this.gender);
 	}
 }

@@ -25,32 +25,35 @@ public class Main {
 		while (!exit) {
 			while (gr == null && !exit) {
 				switch (Interactive.askUser("Choose an action [type help for more info] ",
-						"help|newgr|restoregr|selectgr|listgr|delgr|exit")) {
+						"help|new|restore|select|list|del|exit")) {
 				case "help":
-					System.out.println("\thelp - show this help-message");
-					System.out.println("\tnewgr - create new group");
-					System.out.println("\trestoregr - restore a group from binary(if exists)");
-					System.out.println("\tselectgr - select group by index from list");
-					System.out.println("\tlistgr - show list of existing groups");
-					System.out.println("\tdelgr - delete a group by index");
-					System.out.println("\texit - exit");
+					System.out.println("\thelp\t - show this help-message");
+					System.out.println("\tnew\t - create new group");
+					System.out.println("\trestore\t - restore a group from binary(if exists)");
+					System.out.println("\tselect\t - select group by index from list");
+					System.out.println("\tlist\t - show list of existing groups");
+					System.out.println("\tdel\t - delete a group by index");
+					System.out.println("\texit\t - exit");
 					break;
-				case "newgr":
+				case "new":
 					grName = Interactive.askUser("Please input group name", ".*");
 					gr = groups.addGroup(grName);
-					if (!sampleUsed) {
-						if (Interactive.askUser("Do you want to init group with sample data y/n", "[yn]")
-								.charAt(0) == 'y') {
-							gr.resetGroup();
-							for (Student stud : st) {
-								addStud(gr, stud);
+					if (gr != null) {
+						System.out.printf("Group %s successfully created!\n", gr.getGroupName());
+						if (!sampleUsed) {
+							if (Interactive.askUser("Do you want to init group with sample data y/n", "[yn]")
+									.charAt(0) == 'y') {
+								gr.resetGroup();
+								for (Student stud : st) {
+									addStud(gr, stud);
+								}
+								System.out.println("Group filled with sample data!");
+								sampleUsed = true;
 							}
-							System.out.println("Group %s successfully created!\n" + gr.getGroupName());
-							sampleUsed = true;
 						}
 					}
 					break;
-				case "restoregr":
+				case "restore":
 					grName = Interactive.askUser("Please input group name", ".*");
 					gr = restoreGroup(grName);
 					if (!(gr == null)) {
@@ -59,18 +62,22 @@ public class Main {
 						System.out.println("Error adding group: restore method returned null");
 					}
 					break;
-				case "selectgr":
+				case "select":
 					groups.listGroups();
-					index = Interactive.askUser("Please enter a group Index", "[0-9]+");
-					gr = groups.getGroup(Integer.parseInt(index));
+					if (groups.getGroupsQuan() > 0) {
+						index = Interactive.askUser("Please enter a group Index", "[0-9]+");
+						gr = groups.getGroup(Integer.parseInt(index));
+					}
 					break;
-				case "listgr":
+				case "list":
 					groups.listGroups();
 					break;
-				case "delgr":
+				case "del":
 					groups.listGroups();
-					index = Interactive.askUser("Please enter a group Index", "[0-9]+");
-					groups.delGroup(Integer.parseInt(index));
+					if (groups.getGroupsQuan() > 0) {
+						index = Interactive.askUser("Please enter a group Index", "[0-9]+");
+						groups.delGroup(Integer.parseInt(index));
+					}
 					break;
 				case "exit":
 					exit = true;
@@ -83,17 +90,17 @@ public class Main {
 						"Choose an action [type help for more info] " + gr.getGroupName() + " selected",
 						"help|show|find|sort|add|del|reset|save|serialize|chgr|exit")) {
 				case "help":
-					System.out.println("\thelp - shows this help-message");
-					System.out.println("\tshow - show list of students in group");
-					System.out.println("\tfind - find students by firs letter of sirname");
-					System.out.println("\tsort - sort students by sirname-name key");
-					System.out.println("\tadd - interactively add a new student");
-					System.out.println("\tdel - delete a student from group by id(record book number)");
-					System.out.println("\treset - exclude all students");
-					System.out.println("\tsave - save to txt file");
-					System.out.println("\tserialize - save to binary file");
-					System.out.println("\tchgr - select/create other group");
-					System.out.println("\texit - on exit the group-list is sorted and saved to file");
+					System.out.println("\thelp\t - shows this help-message");
+					System.out.println("\tshow\t - show list of students in group");
+					System.out.println("\tfind\t - find students by firs letter of sirname");
+					System.out.println("\tsort\t - sort students by sirname-name key");
+					System.out.println("\tadd\t - interactively add a new student");
+					System.out.println("\tdel\t - delete a student from group by id(record book number)");
+					System.out.println("\treset\t - exclude all students");
+					System.out.println("\tsave\t - save to txt file");
+					System.out.println("\tserialize\t - save to binary file");
+					System.out.println("\tchgr\t - select/create other group");
+					System.out.println("\texit\t - on exit the group-list is sorted and saved to file");
 					break;
 				case "show":
 					gr.listStudents();

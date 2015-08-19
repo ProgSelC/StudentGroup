@@ -1,54 +1,44 @@
 package selcpkg;
 
+import java.util.ArrayList;
+
 public class GroupArray {
-	private Group[] grArr;
+	private ArrayList<Group> grArr = new ArrayList<Group>();
 
 	public GroupArray() {
 		super();
 	}
 
-	public Group getGroup(int i) {
-		if (grArr == null || i > grArr.length) {
+	public Group getGroup(int index) {
+		Group result = null;
+		if (index > grArr.size()) {
 			System.out.println("No groups in list!");
-			return null;
 		} else {
-			return grArr[i - 1];
+			result = grArr.get(index - 1);
 		}
+		return result;
 	}
 
 	public boolean groupExists(String grName) {
 		boolean result = false;
-		if (grArr != null) {
 			for (Group gr : grArr) {
 				if (gr.getGroupName().equals(grName)) {
 					result = true;
+					break;
 				}
-			}
 		}
 		return result;
 	}
 
 	public int getGroupsQuan() {
-		if (grArr != null) {
-			return grArr.length;
-		} else {
-			return 0;
-		}
+		return grArr.size();
 	}
 
 	public Group addGroup(String grName) {
 		Group result = null;
-		if (grArr == null) {
-			grArr = new Group[1];
-			grArr[0] = new Group(grName);
-			result = grArr[0];
-		} else if (!this.groupExists(grName)) {
-			Group[] newGr = new Group[grArr.length + 1];
-			System.arraycopy(grArr, 0, newGr, 0, grArr.length);
-
-			grArr = newGr;
+		if (!this.groupExists(grName)) {
 			result = new Group(grName);
-			grArr[grArr.length - 1] = result;
+			grArr.add(result);
 		} else {
 			System.out.printf("Error adding new group: %s already exists!\n", grName);
 		}
@@ -57,17 +47,9 @@ public class GroupArray {
 
 	public Group addGroup(Group gr) {
 		Group result = null;
-		if (grArr == null) {
-			grArr = new Group[1];
-			grArr[0] = gr;
-			result = grArr[0];
-		} else if (!this.groupExists(gr.getGroupName())) {
-			Group[] newGr = new Group[grArr.length + 1];
-			System.arraycopy(grArr, 0, newGr, 0, grArr.length);
-
-			grArr = newGr;
+		if (!this.groupExists(gr.getGroupName())) {
 			result = gr;
-			grArr[grArr.length - 1] = result;
+			grArr.add(gr);
 		} else {
 			System.out.printf("Error adding new group: %s already exists!\n", gr.getGroupName());
 		}
@@ -75,32 +57,22 @@ public class GroupArray {
 	}
 
 	public void delGroup(int index) {
-		if (grArr == null) {
+		if (grArr.size() == 0) {
 			System.out.println("Group list is empty!");
-		} else if (index > grArr.length || index < 1) {
+		} else if (index > grArr.size() || index < 1) {
 			System.out.println("Wrong index!");
 		} else {
-			grArr[index - 1].resetGroup();
-			if (grArr.length == 1) {
-				grArr = null;
-			} else {
-				for (int i = (index - 1); i < grArr.length - 1; i++) {
-					grArr[i] = grArr[i + 1];
-				}
-				Group[] newGr = new Group[grArr.length - 1];
-				System.arraycopy(grArr, 0, newGr, 0, newGr.length);
-				grArr = newGr;
-			}
+			grArr.get(index - 1).resetGroup();
+			grArr.remove(index - 1);
 			System.out.println("Group successfully deleted!");
 		}
-
 	}
 
 	public void listGroups() {
-		int i = 0;
-		if (grArr == null) {
+		if (grArr.size() == 0) {
 			System.out.println("No groups in list!");
 		} else {
+			int i = 0;
 			for (Group gr : grArr) {
 				System.out.printf("%2d) %s\n", i + 1, gr.getGroupName());
 				i++;

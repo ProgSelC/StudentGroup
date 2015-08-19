@@ -1,68 +1,60 @@
 package selcpkg;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.TreeSet;
 
 public class Group implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private static int recbookNum = 0;
+	private static int groupMaxSize = 10;
 	private String grName;
-	private Student[] students = new Student[10];
+	private TreeSet<Student> students = new TreeSet<Student>();
 
 	public Group(String grName) {
 		super();
 		this.grName = grName;
 	}
 
+	public static int getGroupMaxSize() {
+		return groupMaxSize;
+	}
+
+	public int getGroupSize() {
+		return students.size();
+	}
+
 	public String getGroupName() {
-		return this.grName;
+		return grName;
 	}
 
 	public Student getStudent(int index) {
-		return this.students[index];
+		Student result = null;
+		int i = 0;
+		for (Student st : students) {
+			if (i == index) {
+				result = st;
+			}
+			i++;
+		}
+		return result;
 	}
 
 	public void resetGroup() {
-		for (int i = 0; i < students.length; i++) {
-			if (this.students[i] != null) {
-				this.students[i].setRecbookNum(0);
-				this.students[i].setGroup(null);
-				this.students[i] = null;
-			}
+		for (Student st : students) {
+			st.setRecbookNum(0);
+			st.setGroup(null);
 		}
-	}
-
-	public void initFromFile(String filename) {
-		String text = "";
-		int maxRbNum = Group.recbookNum;
-		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-			for (int i = -1; i < 10 && (text = br.readLine()) != null; i++) {
-				if (i >= 0) {
-					String[] a = text.split("\\s+");
-					this.students[i] = new Student(a[0], a[1],
-							Integer.parseInt(a[2]), a[3].charAt(0), this,
-							Integer.parseInt(a[4]));
-					maxRbNum = (maxRbNum > Integer.parseInt(a[4])) ? maxRbNum
-							: Integer.parseInt(a[4]);
-				}
-			}
-			Group.recbookNum = maxRbNum;
-		} catch (IOException e) {
-			System.out.println("Error: " + e);
-		}
+		students.clear();
 	}
 
 	public void saveToFile() {
 		String filename = this.grName + ".txt";
 		try (PrintWriter fw = new PrintWriter(filename)) {
-			fw.printf("%-30s\t%-30s\t%s\t%s\t%s\n", "Sirname", "Name", "Age",
-					"Sex", "Recbook");
+			fw.printf("%-30s\t%-30s\t%s\t%s\t%s\n", "Sirname", "Name", "Age", "Sex", "Recbook");
 			for (Student st : students)
 				fw.print(st.returnFormatedInfo());
 		} catch (IOException e) {
@@ -71,32 +63,24 @@ public class Group implements Serializable {
 		}
 		System.out.println("File successfully created!");
 	}
-	
+
 	public void addStudent(Student st) throws GroupIsFullException, DuplicationException {
-		boolean vacant = false;
 		if (st.getRecbookNum() != 0 || this.existsInGroup(st)) {
 			throw new DuplicationException();
+		} else if (students.size() < groupMaxSize) {
+			students.add(st);
+			st.setGroup(this);
+			st.setRecbookNum(++Group.recbookNum);
 		} else {
-			for (int i = 0; i < this.students.length; i++) {
-				if (this.students[i] == null) {
-					this.students[i] = st;
-					st.setGroup(this);
-					st.setRecbookNum(++Group.recbookNum);
-					vacant = true;
-					break;
-				}
-			}
-			if (!vacant) {
-				throw new GroupIsFullException();
-			}
+			throw new GroupIsFullException();
 		}
 	}
 
 	public void findStudent(String sirname) {
 		StringBuffer results = new StringBuffer();
-		for (int i = 0; i < this.students.length; i++) {
-			if (this.students[i] != null && this.students[i].getSirname().matches("^" + sirname + ".*")) {
-				results.append(this.students[i].toString() + "\n");
+		for (Student st : students) {
+			if (st.getSirname().matches("^" + sirname + ".*")) {
+				results.append(st.toString() + "\n");
 			}
 		}
 		if (results.length() > 0) {
@@ -109,50 +93,32 @@ public class Group implements Serializable {
 
 	public void excludeStudent(int rbNum) {
 		boolean stFound = false;
-		int stNumber = 0;
-		for (int i = 0; i < this.students.length; i++) {
-			if (this.students[i] != null && this.students[i].getRecbookNum() == rbNum) {
-				this.students[i].setRecbookNum(0);
-				System.out.println(
-						"Student " + this.students[i].getSirname() + " " + this.students[i].getName() + " excluded");
-				this.students[i].setGroup(null);
-				this.students[i] = null;
+
+		for (Student st : students) {
+			if (st.getRecbookNum() == rbNum) {
+				students.remove(st);
+				st.setRecbookNum(0);
+				st.setGroup(null);
+				System.out.println("Student " + st.getSirname() + " " + st.getName() + " excluded");
 				stFound = true;
-				stNumber = i;
 				break;
 			}
 		}
 		if (!stFound) {
 			System.out.println("No such student!");
-		} else {
-			for (int i = stNumber; i < this.students.length - 1; i++) {
-				this.students[i] = this.students[i + 1];
-				this.students[i + 1] = null;
-			}
 		}
 	}
 
 	public void listStudents() {
-		int index = 0;
-		boolean stExist = false;
-		for (int i = 0; i < this.students.length; i++) {
-			if (this.students[i] != null) {
-				System.out.println(++index + ") " + this.students[i].toString());
-				stExist = true;
+		if (students.size() == 0) {
+			System.out.println("The group is empty!");
+		} else {
+			int index = 0;
+			for (Student st : students) {
+				System.out.println(++index + ") " + st);
 			}
 		}
-		if(!stExist){
-			System.out.println("The group is empty!");
-		}
 		System.out.println();
-	}
-
-	public void sortStudents() {
-		try {
-			Arrays.sort(students);
-		} catch (NullPointerException e) {
-
-		}
 	}
 
 	public void interactiveAdd() {
@@ -170,15 +136,6 @@ public class Group implements Serializable {
 	}
 
 	private boolean existsInGroup(Student st) {
-		boolean result = false;
-		for (Student grStudent : this.students) {
-			if (grStudent != null) {
-				if (grStudent.getSirname().equals(st.getSirname()) && grStudent.getName().equals(st.getName())
-						&& grStudent.getGender() == st.getGender() && grStudent.getAge() == st.getAge()) {
-					result = true;
-				}
-			}
-		}
-		return result;
+		return students.contains(st);
 	}
 }

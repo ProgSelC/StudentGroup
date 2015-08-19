@@ -88,12 +88,11 @@ public class Main {
 			while (!(gr == null)) {
 				switch (Interactive.askUser(
 						"Choose an action [type help for more info] " + gr.getGroupName() + " selected",
-						"help|show|find|sort|add|del|reset|save|serialize|chgr|exit")) {
+						"help|show|find|add|del|reset|save|serialize|chgr|exit")) {
 				case "help":
 					System.out.println("\thelp\t - shows this help-message");
 					System.out.println("\tshow\t - show list of students in group");
 					System.out.println("\tfind\t - find students by firs letter of sirname");
-					System.out.println("\tsort\t - sort students by sirname-name key");
 					System.out.println("\tadd\t - interactively add a new student");
 					System.out.println("\tdel\t - delete a student from group by id(record book number)");
 					System.out.println("\treset\t - exclude all students");
@@ -109,9 +108,6 @@ public class Main {
 					gr.findStudent(
 							Interactive.askUser("Input student sirname (or some first letters)", "[А-ЯA-Z][а-яa-z]+"));
 					break;
-				case "sort":
-					gr.sortStudents();
-					break;
 				case "add":
 					gr.interactiveAdd();
 					break;
@@ -123,7 +119,6 @@ public class Main {
 					gr.resetGroup();
 					break;
 				case "save":
-					gr.sortStudents();
 					gr.saveToFile();
 					break;
 				case "serialize":
